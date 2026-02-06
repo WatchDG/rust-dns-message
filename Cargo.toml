@@ -1,0 +1,16 @@
+[package]
+name = "dns-message"
+version = "0.1.0"
+edition = "2024"
+authors = ["WatchDG <baranov@w3m.co>"]
+description = "DNS message library"
+license = "MIT"
+repository = "https://github.com/WatchDG/rust-dns-message"
+homepage = "https://github.com/WatchDG/rust-dns-message"
+documentation = "https://docs.rs/dns-message"
+keywords = ["dns", "message", "protocol"]
+categories = ["network-programming", "parsing"]
+
+[dependencies]
+
+[dev-dependencies]
