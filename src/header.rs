@@ -30,18 +30,27 @@ impl Header {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Flags {
-    pub qr: QR,
+    pub qr: QueryResponse,
     pub op_code: u8,
-    pub aa: AA,
-    pub tc: TC,
-    pub rd: RD,
+    pub aa: AuthoritativeAnswer,
+    pub tc: Truncation,
+    pub rd: RecursionDesired,
     pub ra: bool,
     pub z: u8,
     pub r_code: u8,
 }
 
 impl Flags {
-    pub fn new(qr: QR, op_code: u8, aa: AA, tc: TC, rd: RD, ra: bool, z: u8, r_code: u8) -> Self {
+    pub fn new(
+        qr: QueryResponse,
+        op_code: u8,
+        aa: AuthoritativeAnswer,
+        tc: Truncation,
+        rd: RecursionDesired,
+        ra: bool,
+        z: u8,
+        r_code: u8,
+    ) -> Self {
         Self {
             qr,
             op_code,
@@ -57,64 +66,86 @@ impl Flags {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
-pub enum QR {
+pub enum QueryResponse {
     Query = 0 << 7,
     Response = 1 << 7,
 }
 
-impl From<u8> for QR {
+impl From<u8> for QueryResponse {
     fn from(b: u8) -> Self {
         if (b & (1 << 7)) != 0 {
-            QR::Response
+            QueryResponse::Response
         } else {
-            QR::Query
+            QueryResponse::Query
         }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
-pub enum AA {
-    False = 0 << 2,
-    True = 1 << 2,
+pub enum AuthoritativeAnswer {
+    NonAuthoritative = 0 << 2,
+    Authoritative = 1 << 2,
 }
 
-impl From<u8> for AA {
-    fn from(b: u8) -> Self {
-        if (b & (1 << 2)) != 0 {
-            AA::True
+impl From<u8> for AuthoritativeAnswer {
+    fn from(v: u8) -> Self {
+        if (v & (1 << 2)) != 0 {
+            AuthoritativeAnswer::Authoritative
         } else {
-            AA::False
+            AuthoritativeAnswer::NonAuthoritative
         }
+    }
+}
+
+impl From<AuthoritativeAnswer> for u8 {
+    fn from(aa: AuthoritativeAnswer) -> Self {
+        aa as u8
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
-pub enum TC {
-    False = 0 << 1,
-    True = 1 << 1,
+pub enum Truncation {
+    NotTruncated = 0 << 1,
+    Truncated = 1 << 1,
 }
 
-impl From<u8> for TC {
-    fn from(b: u8) -> Self {
-        if (b & (1 << 1)) != 0 {
-            TC::True
+impl From<u8> for Truncation {
+    fn from(v: u8) -> Self {
+        if (v & (1 << 1)) != 0 {
+            Truncation::Truncated
         } else {
-            TC::False
+            Truncation::NotTruncated
         }
+    }
+}
+
+impl From<Truncation> for u8 {
+    fn from(tc: Truncation) -> Self {
+        tc as u8
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
-pub enum RD {
-    False = 0,
-    True = 1,
+pub enum RecursionDesired {
+    RecursionNotDesired = 0,
+    RecursionDesired = 1,
 }
 
-impl From<u8> for RD {
-    fn from(b: u8) -> Self {
-        if (b & 1) != 0 { RD::True } else { RD::False }
+impl From<u8> for RecursionDesired {
+    fn from(v: u8) -> Self {
+        if (v & 1) != 0 {
+            RecursionDesired::RecursionDesired
+        } else {
+            RecursionDesired::RecursionNotDesired
+        }
+    }
+}
+
+impl From<RecursionDesired> for u8 {
+    fn from(rd: RecursionDesired) -> Self {
+        rd as u8
     }
 }
