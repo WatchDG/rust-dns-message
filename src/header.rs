@@ -62,11 +62,31 @@ pub enum QR {
     Response = 1 << 7,
 }
 
+impl From<u8> for QR {
+    fn from(b: u8) -> Self {
+        if (b & (1 << 7)) != 0 {
+            QR::Response
+        } else {
+            QR::Query
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum AA {
     False = 0 << 2,
     True = 1 << 2,
+}
+
+impl From<u8> for AA {
+    fn from(b: u8) -> Self {
+        if (b & (1 << 2)) != 0 {
+            AA::True
+        } else {
+            AA::False
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -76,9 +96,25 @@ pub enum TC {
     True = 1 << 1,
 }
 
+impl From<u8> for TC {
+    fn from(b: u8) -> Self {
+        if (b & (1 << 1)) != 0 {
+            TC::True
+        } else {
+            TC::False
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum RD {
     False = 0,
     True = 1,
+}
+
+impl From<u8> for RD {
+    fn from(b: u8) -> Self {
+        if (b & 1) != 0 { RD::True } else { RD::False }
+    }
 }
