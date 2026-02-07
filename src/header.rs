@@ -30,27 +30,18 @@ impl Header {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Flags {
-    pub qr: bool,
+    pub qr: QR,
     pub op_code: u8,
-    pub aa: bool,
-    pub tc: bool,
-    pub rd: bool,
+    pub aa: AA,
+    pub tc: TC,
+    pub rd: RD,
     pub ra: bool,
     pub z: u8,
     pub r_code: u8,
 }
 
 impl Flags {
-    pub fn new(
-        qr: bool,
-        op_code: u8,
-        aa: bool,
-        tc: bool,
-        rd: bool,
-        ra: bool,
-        z: u8,
-        r_code: u8,
-    ) -> Self {
+    pub fn new(qr: QR, op_code: u8, aa: AA, tc: TC, rd: RD, ra: bool, z: u8, r_code: u8) -> Self {
         Self {
             qr,
             op_code,
@@ -62,4 +53,32 @@ impl Flags {
             r_code,
         }
     }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
+pub enum QR {
+    Query = 0 << 7,
+    Response = 1 << 7,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
+pub enum AA {
+    False = 0 << 2,
+    True = 1 << 2,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
+pub enum TC {
+    False = 0 << 1,
+    True = 1 << 1,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
+pub enum RD {
+    False = 0,
+    True = 1,
 }
