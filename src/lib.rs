@@ -4,6 +4,7 @@ mod question;
 mod resource_record;
 pub mod traits;
 
+pub use header::Flags;
 pub use header::Header;
 pub use message::Message;
 pub use question::Question;
