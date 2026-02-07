@@ -1,7 +1,15 @@
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Message {
     pub header: Header,
 }
 
+impl Message {
+    pub fn new(header: Header) -> Self {
+        Self { header }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Header {
     pub id: u16,
     pub flags: u16,
