@@ -81,6 +81,12 @@ impl From<u8> for QueryResponse {
     }
 }
 
+impl From<QueryResponse> for u8 {
+    fn from(qr: QueryResponse) -> Self {
+        qr as u8
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum AuthoritativeAnswer {
