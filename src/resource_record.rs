@@ -1,6 +1,6 @@
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ResourceRecord<'a> {
-    pub rr_name: &'a [u8],
+    pub rr_name: ResourceRecordName<'a>,
     pub rr_type: u16,
     pub rr_class: u16,
     pub rr_ttl: u32,
@@ -10,7 +10,7 @@ pub struct ResourceRecord<'a> {
 
 impl<'a> ResourceRecord<'a> {
     pub fn new(
-        rr_name: &'a [u8],
+        rr_name: ResourceRecordName<'a>,
         rr_type: u16,
         rr_class: u16,
         rr_ttl: u32,
@@ -26,4 +26,16 @@ impl<'a> ResourceRecord<'a> {
             rr_data,
         }
     }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ResourceRecordName<'a> {
+    pub offset: u16,
+    pub kind: ResourceRecordNameKind<'a>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ResourceRecordNameKind<'a> {
+    Inline(&'a [u8]),
+    Pointer(u16),
 }
