@@ -35,8 +35,8 @@ pub struct Flags {
     pub aa: AuthoritativeAnswer,
     pub tc: Truncation,
     pub rd: RecursionDesired,
-    pub ra: bool,
-    pub z: u8,
+    pub ra: RecursionAvailable,
+    pub z: ReservedZ,
     pub r_code: u8,
 }
 
@@ -47,8 +47,8 @@ impl Flags {
         aa: AuthoritativeAnswer,
         tc: Truncation,
         rd: RecursionDesired,
-        ra: bool,
-        z: u8,
+        ra: RecursionAvailable,
+        z: ReservedZ,
         r_code: u8,
     ) -> Self {
         Self {
@@ -153,5 +153,54 @@ impl From<u8> for RecursionDesired {
 impl From<RecursionDesired> for u8 {
     fn from(rd: RecursionDesired) -> Self {
         rd as u8
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
+pub enum RecursionAvailable {
+    RecursionNotAvailable = 0 << 7,
+    RecursionAvailable = 1 << 7,
+}
+
+impl From<u8> for RecursionAvailable {
+    fn from(v: u8) -> Self {
+        if (v & (1 << 7)) != 0 {
+            RecursionAvailable::RecursionAvailable
+        } else {
+            RecursionAvailable::RecursionNotAvailable
+        }
+    }
+}
+
+impl From<RecursionAvailable> for u8 {
+    fn from(ra: RecursionAvailable) -> Self {
+        ra as u8
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ReservedZ {
+    Reserved,
+    NonStandard(u8),
+}
+
+impl From<u8> for ReservedZ {
+    fn from(v: u8) -> Self {
+        let vv = (v >> 4) & 0b111;
+        if vv == 0 {
+            ReservedZ::Reserved
+        } else {
+            ReservedZ::NonStandard(vv)
+        }
+    }
+}
+
+impl From<ReservedZ> for u8 {
+    fn from(z: ReservedZ) -> Self {
+        match z {
+            ReservedZ::Reserved => 0,
+            ReservedZ::NonStandard(v) => v << 4,
+        }
     }
 }
