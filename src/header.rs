@@ -62,6 +62,33 @@ impl Flags {
             rcode,
         }
     }
+
+    pub fn from_flags_bytes(h: u8, l: u8) -> Self {
+        Flags::new(
+            QueryResponse::from_flags_byte(h),
+            OpCode::from_flags_byte(h),
+            AuthoritativeAnswer::from_flags_byte(h),
+            Truncation::from_flags_byte(h),
+            RecursionDesired::from_flags_byte(h),
+            RecursionAvailable::from_flags_byte(l),
+            ReservedZ::from_flags_byte(l),
+            RCode::from_flags_byte(l),
+        )
+    }
+
+    pub fn to_flags_bytes(&self) -> (u8, u8) {
+        let h: u8 = self.qr.to_flags_byte_bits()
+            | self.opcode.to_flags_byte_bits()
+            | self.aa.to_flags_byte_bits()
+            | self.tc.to_flags_byte_bits()
+            | self.rd.to_flags_byte_bits();
+
+        let l = self.ra.to_flags_byte_bits()
+            | self.z.to_flags_byte_bits()
+            | self.rcode.to_flags_byte_bits();
+
+        (h, l)
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
