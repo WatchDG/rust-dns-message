@@ -31,7 +31,7 @@ impl Header {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Flags {
     pub qr: QueryResponse,
-    pub op_code: u8,
+    pub opcode: OpCode,
     pub aa: AuthoritativeAnswer,
     pub tc: Truncation,
     pub rd: RecursionDesired,
@@ -43,7 +43,7 @@ pub struct Flags {
 impl Flags {
     pub fn new(
         qr: QueryResponse,
-        op_code: u8,
+        opcode: OpCode,
         aa: AuthoritativeAnswer,
         tc: Truncation,
         rd: RecursionDesired,
@@ -53,7 +53,7 @@ impl Flags {
     ) -> Self {
         Self {
             qr,
-            op_code,
+            opcode,
             aa,
             tc,
             rd,
@@ -191,5 +191,41 @@ impl ReservedZ {
             ReservedZ::NonStandard(v) => v & 0b111,
         };
         z << 4
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum OpCode {
+    Query,
+    IQuery,
+    Status,
+    Notify,
+    Update,
+    Unassigned(u8),
+}
+
+impl OpCode {
+    pub fn from_flags_byte(byte: u8) -> Self {
+        let v = (byte >> 3) & 0b1111;
+        match v {
+            0 => OpCode::Query,
+            1 => OpCode::IQuery,
+            2 => OpCode::Status,
+            4 => OpCode::Notify,
+            5 => OpCode::Update,
+            other => OpCode::Unassigned(other),
+        }
+    }
+
+    pub fn to_flags_byte_bits(self) -> u8 {
+        let v = match self {
+            OpCode::Query => 0,
+            OpCode::IQuery => 1,
+            OpCode::Status => 2,
+            OpCode::Notify => 4,
+            OpCode::Update => 5,
+            OpCode::Unassigned(x) => x & 0b1111,
+        };
+        v << 3
     }
 }
