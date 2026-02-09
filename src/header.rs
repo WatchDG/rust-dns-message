@@ -37,7 +37,7 @@ pub struct Flags {
     pub rd: RecursionDesired,
     pub ra: RecursionAvailable,
     pub z: ReservedZ,
-    pub r_code: u8,
+    pub rcode: RCode,
 }
 
 impl Flags {
@@ -49,7 +49,7 @@ impl Flags {
         rd: RecursionDesired,
         ra: RecursionAvailable,
         z: ReservedZ,
-        r_code: u8,
+        rcode: RCode,
     ) -> Self {
         Self {
             qr,
@@ -59,7 +59,7 @@ impl Flags {
             rd,
             ra,
             z,
-            r_code,
+            rcode,
         }
     }
 }
@@ -227,5 +227,59 @@ impl OpCode {
             OpCode::Unassigned(x) => x & 0b1111,
         };
         v << 3
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RCode {
+    NoError,
+    FormErr,
+    ServFail,
+    NXDomain,
+    NotImp,
+    Refused,
+    YXDomain,
+    YXRRSet,
+    NXRRSet,
+    NotAuth,
+    NotZone,
+    Unassigned(u8),
+}
+
+impl RCode {
+    pub fn from_flags_byte(byte: u8) -> Self {
+        let v = byte & 0b1111;
+        match v {
+            0 => RCode::NoError,
+            1 => RCode::FormErr,
+            2 => RCode::ServFail,
+            3 => RCode::NXDomain,
+            4 => RCode::NotImp,
+            5 => RCode::Refused,
+            6 => RCode::YXDomain,
+            7 => RCode::YXRRSet,
+            8 => RCode::NXRRSet,
+            9 => RCode::NotAuth,
+            10 => RCode::NotZone,
+            other => RCode::Unassigned(other),
+        }
+    }
+
+    pub fn to_flags_byte_bits(self) -> u8 {
+        let v = match self {
+            RCode::NoError => 0,
+            RCode::FormErr => 1,
+            RCode::ServFail => 2,
+            RCode::NXDomain => 3,
+            RCode::NotImp => 4,
+            RCode::Refused => 5,
+            RCode::YXDomain => 6,
+            RCode::YXRRSet => 7,
+            RCode::NXRRSet => 8,
+            RCode::NotAuth => 9,
+            RCode::NotZone => 10,
+            RCode::Unassigned(x) => x & 0b1111,
+        };
+        v
     }
 }
