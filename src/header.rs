@@ -71,19 +71,17 @@ pub enum QueryResponse {
     Response = 1 << 7,
 }
 
-impl From<u8> for QueryResponse {
-    fn from(b: u8) -> Self {
-        if (b & (1 << 7)) != 0 {
+impl QueryResponse {
+    pub fn from_flags_byte(byte: u8) -> Self {
+        if (byte & (1 << 7)) != 0 {
             QueryResponse::Response
         } else {
             QueryResponse::Query
         }
     }
-}
 
-impl From<QueryResponse> for u8 {
-    fn from(qr: QueryResponse) -> Self {
-        qr as u8
+    pub fn to_flags_byte_bits(self) -> u8 {
+        self as u8
     }
 }
 
@@ -94,19 +92,17 @@ pub enum AuthoritativeAnswer {
     Authoritative = 1 << 2,
 }
 
-impl From<u8> for AuthoritativeAnswer {
-    fn from(v: u8) -> Self {
-        if (v & (1 << 2)) != 0 {
+impl AuthoritativeAnswer {
+    pub fn from_flags_byte(byte: u8) -> Self {
+        if (byte & (1 << 2)) != 0 {
             AuthoritativeAnswer::Authoritative
         } else {
             AuthoritativeAnswer::NonAuthoritative
         }
     }
-}
 
-impl From<AuthoritativeAnswer> for u8 {
-    fn from(aa: AuthoritativeAnswer) -> Self {
-        aa as u8
+    pub fn to_flags_byte_bits(self) -> u8 {
+        self as u8
     }
 }
 
@@ -117,19 +113,17 @@ pub enum Truncation {
     Truncated = 1 << 1,
 }
 
-impl From<u8> for Truncation {
-    fn from(v: u8) -> Self {
-        if (v & (1 << 1)) != 0 {
+impl Truncation {
+    pub fn from_flags_byte(byte: u8) -> Self {
+        if (byte & (1 << 1)) != 0 {
             Truncation::Truncated
         } else {
             Truncation::NotTruncated
         }
     }
-}
 
-impl From<Truncation> for u8 {
-    fn from(tc: Truncation) -> Self {
-        tc as u8
+    pub fn to_flags_byte_bits(self) -> u8 {
+        self as u8
     }
 }
 
@@ -140,19 +134,17 @@ pub enum RecursionDesired {
     RecursionDesired = 1,
 }
 
-impl From<u8> for RecursionDesired {
-    fn from(v: u8) -> Self {
-        if (v & 1) != 0 {
+impl RecursionDesired {
+    pub fn from_flags_byte(byte: u8) -> Self {
+        if (byte & 1) != 0 {
             RecursionDesired::RecursionDesired
         } else {
             RecursionDesired::RecursionNotDesired
         }
     }
-}
 
-impl From<RecursionDesired> for u8 {
-    fn from(rd: RecursionDesired) -> Self {
-        rd as u8
+    pub fn to_flags_byte_bits(self) -> u8 {
+        self as u8
     }
 }
 
@@ -163,19 +155,17 @@ pub enum RecursionAvailable {
     RecursionAvailable = 1 << 7,
 }
 
-impl From<u8> for RecursionAvailable {
-    fn from(v: u8) -> Self {
-        if (v & (1 << 7)) != 0 {
+impl RecursionAvailable {
+    pub fn from_flags_byte(byte: u8) -> Self {
+        if (byte & (1 << 7)) != 0 {
             RecursionAvailable::RecursionAvailable
         } else {
             RecursionAvailable::RecursionNotAvailable
         }
     }
-}
 
-impl From<RecursionAvailable> for u8 {
-    fn from(ra: RecursionAvailable) -> Self {
-        ra as u8
+    pub fn to_flags_byte_bits(self) -> u8 {
+        self as u8
     }
 }
 
@@ -185,22 +175,21 @@ pub enum ReservedZ {
     NonStandard(u8),
 }
 
-impl From<u8> for ReservedZ {
-    fn from(v: u8) -> Self {
-        let vv = (v >> 4) & 0b111;
-        if vv == 0 {
+impl ReservedZ {
+    pub fn from_flags_byte(byte: u8) -> Self {
+        let v = (byte >> 4) & 0b111;
+        if v == 0 {
             ReservedZ::Reserved
         } else {
-            ReservedZ::NonStandard(vv)
+            ReservedZ::NonStandard(v)
         }
     }
-}
 
-impl From<ReservedZ> for u8 {
-    fn from(z: ReservedZ) -> Self {
-        match z {
+    pub fn to_flags_byte_bits(self) -> u8 {
+        let z = match self {
             ReservedZ::Reserved => 0,
-            ReservedZ::NonStandard(v) => v << 4,
-        }
+            ReservedZ::NonStandard(v) => v & 0b111,
+        };
+        z << 4
     }
 }
