@@ -37,6 +37,8 @@ pub struct Flags {
     pub rd: RD,
     pub ra: RA,
     pub z: Z,
+    pub ad: AD,
+    pub cd: CD,
     pub r_code: RCode,
 }
 
@@ -49,6 +51,8 @@ impl Flags {
         rd: RD,
         ra: RA,
         z: Z,
+        ad: AD,
+        cd: CD,
         r_code: RCode,
     ) -> Self {
         Self {
@@ -59,6 +63,8 @@ impl Flags {
             rd,
             ra,
             z,
+            ad,
+            cd,
             r_code,
         }
     }
@@ -72,6 +78,8 @@ impl Flags {
             RD::from_flags_byte(h),
             RA::from_flags_byte(l),
             Z::from_flags_byte(l),
+            AD::from_flags_byte(l),
+            CD::from_flags_byte(l),
             RCode::from_flags_byte(l),
         )
     }
@@ -85,6 +93,8 @@ impl Flags {
 
         let l = self.ra.to_flags_byte_bits()
             | self.z.to_flags_byte_bits()
+            | self.ad.to_flags_byte_bits()
+            | self.cd.to_flags_byte_bits()
             | self.r_code.to_flags_byte_bits();
 
         (h, l)
@@ -197,31 +207,6 @@ impl RA {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Z {
-    Reserved,
-    Unassigned(u8),
-}
-
-impl Z {
-    pub fn from_flags_byte(byte: u8) -> Self {
-        let v = (byte >> 4) & 0b111;
-        if v == 0 {
-            Z::Reserved
-        } else {
-            Z::Unassigned(v)
-        }
-    }
-
-    pub fn to_flags_byte_bits(self) -> u8 {
-        let z = match self {
-            Z::Reserved => 0,
-            Z::Unassigned(v) => v & 0b111,
-        };
-        z << 4
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum OpCode {
     Query,
     IQuery,
@@ -308,5 +293,68 @@ impl RCode {
             RCode::Unassigned(x) => x & 0b1111,
         };
         v
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
+pub enum Z {
+    Zero = 0 << 6,
+    One = 1 << 6,
+}
+
+impl Z {
+    pub fn from_flags_byte(byte: u8) -> Self {
+        if (byte & (1 << 6)) != 0 {
+            Z::One
+        } else {
+            Z::Zero
+        }
+    }
+
+    pub fn to_flags_byte_bits(self) -> u8 {
+        self as u8
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
+pub enum AD {
+    DataNotAuthenticated = 0 << 5,
+    DataAuthenticated = 1 << 5,
+}
+
+impl AD {
+    pub fn from_flags_byte(byte: u8) -> Self {
+        if (byte & (1 << 5)) != 0 {
+            AD::DataAuthenticated
+        } else {
+            AD::DataNotAuthenticated
+        }
+    }
+
+    pub fn to_flags_byte_bits(self) -> u8 {
+        self as u8
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
+pub enum CD {
+    CheckingEnabled = 0 << 4,
+    CheckingDisabled = 1 << 4,
+}
+
+impl CD {
+    pub fn from_flags_byte(byte: u8) -> Self {
+        if (byte & (1 << 4)) != 0 {
+            CD::CheckingDisabled
+        } else {
+            CD::CheckingEnabled
+        }
+    }
+
+    pub fn to_flags_byte_bits(self) -> u8 {
+        self as u8
     }
 }
