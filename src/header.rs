@@ -30,62 +30,62 @@ impl Header {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Flags {
-    pub qr: QueryResponse,
-    pub opcode: OpCode,
-    pub aa: AuthoritativeAnswer,
-    pub tc: Truncation,
-    pub rd: RecursionDesired,
-    pub ra: RecursionAvailable,
-    pub z: ReservedZ,
-    pub rcode: RCode,
+    pub qr: QR,
+    pub op_code: OpCode,
+    pub aa: AA,
+    pub tc: TC,
+    pub rd: RD,
+    pub ra: RA,
+    pub z: Z,
+    pub r_code: RCode,
 }
 
 impl Flags {
     pub fn new(
-        qr: QueryResponse,
-        opcode: OpCode,
-        aa: AuthoritativeAnswer,
-        tc: Truncation,
-        rd: RecursionDesired,
-        ra: RecursionAvailable,
-        z: ReservedZ,
-        rcode: RCode,
+        qr: QR,
+        op_code: OpCode,
+        aa: AA,
+        tc: TC,
+        rd: RD,
+        ra: RA,
+        z: Z,
+        r_code: RCode,
     ) -> Self {
         Self {
             qr,
-            opcode,
+            op_code,
             aa,
             tc,
             rd,
             ra,
             z,
-            rcode,
+            r_code,
         }
     }
 
     pub fn from_flags_bytes(h: u8, l: u8) -> Self {
         Flags::new(
-            QueryResponse::from_flags_byte(h),
+            QR::from_flags_byte(h),
             OpCode::from_flags_byte(h),
-            AuthoritativeAnswer::from_flags_byte(h),
-            Truncation::from_flags_byte(h),
-            RecursionDesired::from_flags_byte(h),
-            RecursionAvailable::from_flags_byte(l),
-            ReservedZ::from_flags_byte(l),
+            AA::from_flags_byte(h),
+            TC::from_flags_byte(h),
+            RD::from_flags_byte(h),
+            RA::from_flags_byte(l),
+            Z::from_flags_byte(l),
             RCode::from_flags_byte(l),
         )
     }
 
     pub fn to_flags_bytes(&self) -> (u8, u8) {
         let h: u8 = self.qr.to_flags_byte_bits()
-            | self.opcode.to_flags_byte_bits()
+            | self.op_code.to_flags_byte_bits()
             | self.aa.to_flags_byte_bits()
             | self.tc.to_flags_byte_bits()
             | self.rd.to_flags_byte_bits();
 
         let l = self.ra.to_flags_byte_bits()
             | self.z.to_flags_byte_bits()
-            | self.rcode.to_flags_byte_bits();
+            | self.r_code.to_flags_byte_bits();
 
         (h, l)
     }
@@ -93,17 +93,17 @@ impl Flags {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
-pub enum QueryResponse {
+pub enum QR {
     Query = 0 << 7,
     Response = 1 << 7,
 }
 
-impl QueryResponse {
+impl QR {
     pub fn from_flags_byte(byte: u8) -> Self {
         if (byte & (1 << 7)) != 0 {
-            QueryResponse::Response
+            QR::Response
         } else {
-            QueryResponse::Query
+            QR::Query
         }
     }
 
@@ -114,17 +114,17 @@ impl QueryResponse {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
-pub enum AuthoritativeAnswer {
+pub enum AA {
     NonAuthoritative = 0 << 2,
     Authoritative = 1 << 2,
 }
 
-impl AuthoritativeAnswer {
+impl AA {
     pub fn from_flags_byte(byte: u8) -> Self {
         if (byte & (1 << 2)) != 0 {
-            AuthoritativeAnswer::Authoritative
+            AA::Authoritative
         } else {
-            AuthoritativeAnswer::NonAuthoritative
+            AA::NonAuthoritative
         }
     }
 
@@ -135,17 +135,17 @@ impl AuthoritativeAnswer {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
-pub enum Truncation {
+pub enum TC {
     NotTruncated = 0 << 1,
     Truncated = 1 << 1,
 }
 
-impl Truncation {
+impl TC {
     pub fn from_flags_byte(byte: u8) -> Self {
         if (byte & (1 << 1)) != 0 {
-            Truncation::Truncated
+            TC::Truncated
         } else {
-            Truncation::NotTruncated
+            TC::NotTruncated
         }
     }
 
@@ -156,17 +156,17 @@ impl Truncation {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
-pub enum RecursionDesired {
+pub enum RD {
     RecursionNotDesired = 0,
     RecursionDesired = 1,
 }
 
-impl RecursionDesired {
+impl RD {
     pub fn from_flags_byte(byte: u8) -> Self {
         if (byte & 1) != 0 {
-            RecursionDesired::RecursionDesired
+            RD::RecursionDesired
         } else {
-            RecursionDesired::RecursionNotDesired
+            RD::RecursionNotDesired
         }
     }
 
@@ -177,17 +177,17 @@ impl RecursionDesired {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
-pub enum RecursionAvailable {
+pub enum RA {
     RecursionNotAvailable = 0 << 7,
     RecursionAvailable = 1 << 7,
 }
 
-impl RecursionAvailable {
+impl RA {
     pub fn from_flags_byte(byte: u8) -> Self {
         if (byte & (1 << 7)) != 0 {
-            RecursionAvailable::RecursionAvailable
+            RA::RecursionAvailable
         } else {
-            RecursionAvailable::RecursionNotAvailable
+            RA::RecursionNotAvailable
         }
     }
 
@@ -197,25 +197,25 @@ impl RecursionAvailable {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ReservedZ {
+pub enum Z {
     Reserved,
-    NonStandard(u8),
+    Unassigned(u8),
 }
 
-impl ReservedZ {
+impl Z {
     pub fn from_flags_byte(byte: u8) -> Self {
         let v = (byte >> 4) & 0b111;
         if v == 0 {
-            ReservedZ::Reserved
+            Z::Reserved
         } else {
-            ReservedZ::NonStandard(v)
+            Z::Unassigned(v)
         }
     }
 
     pub fn to_flags_byte_bits(self) -> u8 {
         let z = match self {
-            ReservedZ::Reserved => 0,
-            ReservedZ::NonStandard(v) => v & 0b111,
+            Z::Reserved => 0,
+            Z::Unassigned(v) => v & 0b111,
         };
         z << 4
     }
