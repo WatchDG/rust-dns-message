@@ -299,17 +299,12 @@ impl RCode {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum Z {
-    Zero = 0 << 6,
-    One = 1 << 6,
+    Reserved = 0 << 6,
 }
 
 impl Z {
-    pub fn from_flags_byte(byte: u8) -> Self {
-        if (byte & (1 << 6)) != 0 {
-            Z::One
-        } else {
-            Z::Zero
-        }
+    pub fn from_flags_byte(_byte: u8) -> Self {
+        Z::Reserved
     }
 
     pub fn to_flags_byte_bits(self) -> u8 {
