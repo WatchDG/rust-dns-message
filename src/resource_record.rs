@@ -51,7 +51,6 @@ pub enum RRType {
     TXT,
     AAAA,
     SRV,
-    ANY,
     Unknown(u16),
 }
 
@@ -67,7 +66,6 @@ impl RRType {
             16 => RRType::TXT,
             28 => RRType::AAAA,
             33 => RRType::SRV,
-            255 => RRType::ANY,
             other => RRType::Unknown(other),
         }
     }
@@ -83,7 +81,6 @@ impl RRType {
             RRType::TXT => 16,
             RRType::AAAA => 28,
             RRType::SRV => 33,
-            RRType::ANY => 255,
             RRType::Unknown(v) => v,
         }
     }
@@ -107,7 +104,6 @@ pub enum RRClass {
     CS,
     CH,
     HS,
-    ANY,
     Unknown(u16),
 }
 
@@ -118,7 +114,6 @@ impl RRClass {
             2 => RRClass::CS,
             3 => RRClass::CH,
             4 => RRClass::HS,
-            255 => RRClass::ANY,
             other => RRClass::Unknown(other),
         }
     }
@@ -129,7 +124,6 @@ impl RRClass {
             RRClass::CS => 2,
             RRClass::CH => 3,
             RRClass::HS => 4,
-            RRClass::ANY => 255,
             RRClass::Unknown(v) => v,
         }
     }
