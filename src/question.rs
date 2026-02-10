@@ -1,3 +1,6 @@
+use crate::traits::GetLabels;
+use std::marker::PhantomData;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Label<'a> {
     pub length: u8,
@@ -11,26 +14,27 @@ impl<'a> Label<'a> {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct QName<'a> {
+pub struct QName<'a, GL: GetLabels<'a>> {
     pub offset: u16,
-    pub kind: QNameKind<'a>,
+    pub kind: QNameKind<'a, GL>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum QNameKind<'a> {
-    Inline(&'a [Label<'a>]),
+pub enum QNameKind<'a, GL: GetLabels<'a>> {
+    Inline(GL),
     Pointer(u16),
+    _Phantom(PhantomData<&'a ()>),
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Question<'a> {
-    pub q_name: QName<'a>,
+pub struct Question<'a, GL: GetLabels<'a>> {
+    pub q_name: QName<'a, GL>,
     pub q_type: QType,
     pub q_class: QClass,
 }
 
-impl<'a> Question<'a> {
-    pub fn new(q_name: QName<'a>, q_type: QType, q_class: QClass) -> Self {
+impl<'a, GL: GetLabels<'a>> Question<'a, GL> {
+    pub fn new(q_name: QName<'a, GL>, q_type: QType, q_class: QClass) -> Self {
         Self {
             q_name,
             q_type,
