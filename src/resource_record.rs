@@ -1,3 +1,5 @@
+use crate::question::Label;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ResourceRecord<'a> {
     pub rr_name: ResourceRecordName<'a>,
@@ -36,7 +38,7 @@ pub struct ResourceRecordName<'a> {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ResourceRecordNameKind<'a> {
-    Inline(&'a [u8]),
+    Inline(&'a [Label<'a>]),
     Pointer(u16),
 }
 

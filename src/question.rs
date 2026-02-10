@@ -1,12 +1,36 @@
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Label<'a> {
+    pub length: u8,
+    pub data: &'a [u8],
+}
+
+impl<'a> Label<'a> {
+    pub fn new(length: u8, data: &'a [u8]) -> Self {
+        Self { length, data }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct QName<'a> {
+    pub offset: u16,
+    pub kind: QNameKind<'a>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum QNameKind<'a> {
+    Inline(&'a [Label<'a>]),
+    Pointer(u16),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Question<'a> {
-    pub q_name: &'a [u8],
+    pub q_name: QName<'a>,
     pub q_type: QType,
     pub q_class: QClass,
 }
 
 impl<'a> Question<'a> {
-    pub fn new(q_name: &'a [u8], q_type: QType, q_class: QClass) -> Self {
+    pub fn new(q_name: QName<'a>, q_type: QType, q_class: QClass) -> Self {
         Self {
             q_name,
             q_type,
