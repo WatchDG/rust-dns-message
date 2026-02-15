@@ -3,6 +3,7 @@ mod message;
 mod question;
 pub mod refs;
 pub mod resource_record;
+pub mod wire_length;
 
 pub use header::Header;
 pub use message::Message;
