@@ -1,8 +1,8 @@
-use crate::question::Label;
+use crate::question::NameElement;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ResourceRecord<'a> {
-    pub rr_name: ResourceRecordName<'a>,
+    pub rr_name: Vec<NameElement<'a>>,
     pub rr_type: RRType,
     pub rr_class: RRClass,
     pub rr_ttl: u32,
@@ -12,7 +12,7 @@ pub struct ResourceRecord<'a> {
 
 impl<'a> ResourceRecord<'a> {
     pub fn new(
-        rr_name: ResourceRecordName<'a>,
+        rr_name: Vec<NameElement<'a>>,
         rr_type: RRType,
         rr_class: RRClass,
         rr_ttl: u32,
@@ -28,18 +28,6 @@ impl<'a> ResourceRecord<'a> {
             rr_data,
         }
     }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct ResourceRecordName<'a> {
-    pub offset: u16,
-    pub kind: ResourceRecordNameKind<'a>,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ResourceRecordNameKind<'a> {
-    Inline(&'a [Label<'a>]),
-    Pointer(u16),
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

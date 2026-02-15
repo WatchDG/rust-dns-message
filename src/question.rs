@@ -10,27 +10,24 @@ impl<'a> Label<'a> {
     }
 }
 
+/// A single element in a domain name: label, pointer, root, or reserved.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct QName<'a> {
-    pub offset: u16,
-    pub kind: QNameKind<'a>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum QNameKind<'a> {
-    Inline(Vec<Label<'a>>),
+pub enum NameElement<'a> {
+    Label(Label<'a>),
     Pointer(u16),
+    Root,
+    Reserved,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Question<'a> {
-    pub q_name: QName<'a>,
+    pub q_name: Vec<NameElement<'a>>,
     pub q_type: QType,
     pub q_class: QClass,
 }
 
 impl<'a> Question<'a> {
-    pub fn new(q_name: QName<'a>, q_type: QType, q_class: QClass) -> Self {
+    pub fn new(q_name: Vec<NameElement<'a>>, q_type: QType, q_class: QClass) -> Self {
         Self {
             q_name,
             q_type,
