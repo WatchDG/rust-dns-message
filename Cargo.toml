@@ -12,5 +12,6 @@ keywords = ["dns", "message", "protocol"]
 categories = ["network-programming", "parsing"]
 
 [dependencies]
+mt = "0.3"
 
 [dev-dependencies]

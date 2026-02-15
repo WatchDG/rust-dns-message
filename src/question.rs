@@ -19,9 +19,11 @@ pub enum NameElement<'a> {
     Reserved,
 }
 
+pub type Name<'a> = Vec<NameElement<'a>>;
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Question<'a> {
-    pub q_name: Vec<NameElement<'a>>,
+    pub q_name: Name<'a>,
     pub q_type: QType,
     pub q_class: QClass,
 }

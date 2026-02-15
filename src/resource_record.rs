@@ -1,8 +1,8 @@
-use crate::question::NameElement;
+use crate::question::Name;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ResourceRecord<'a> {
-    pub rr_name: Vec<NameElement<'a>>,
+    pub rr_name: Name<'a>,
     pub rr_type: RRType,
     pub rr_class: RRClass,
     pub rr_ttl: u32,
@@ -12,7 +12,7 @@ pub struct ResourceRecord<'a> {
 
 impl<'a> ResourceRecord<'a> {
     pub fn new(
-        rr_name: Vec<NameElement<'a>>,
+        rr_name: Name<'a>,
         rr_type: RRType,
         rr_class: RRClass,
         rr_ttl: u32,

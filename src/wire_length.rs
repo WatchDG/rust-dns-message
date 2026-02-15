@@ -1,43 +1,56 @@
-use crate::{Flags, Header, Message, NameElement, Question, ResourceRecord};
+use crate::header::{Flags, Header};
+use crate::message::Message;
+use crate::question::{Label, NameElement, Question};
+use crate::resource_record::ResourceRecord;
+use mt::WireLength;
 
-pub fn flags_wire_length(_flags: &Flags) -> usize {
-    2
+impl WireLength<usize> for Header {
+    fn wire_length(&self) -> usize {
+        12
+    }
 }
 
-pub fn header_wire_length(_header: &Header) -> usize {
-    12
+impl WireLength<usize> for &Flags {
+    fn wire_length(&self) -> usize {
+        2
+    }
 }
 
-pub fn name_wire_length(name: &[NameElement<'_>]) -> usize {
-    name.iter()
-        .map(|e| match e {
-            NameElement::Label(l) => 1 + l.data.len(),
+impl<'a> WireLength<usize> for &Label<'a> {
+    fn wire_length(&self) -> usize {
+        1 + self.data.len()
+    }
+}
+
+impl<'a> WireLength<usize> for NameElement<'a> {
+    fn wire_length(&self) -> usize {
+        match self {
+            NameElement::Label(l) => l.wire_length(),
             NameElement::Pointer(_) => 2,
             NameElement::Root => 1,
             NameElement::Reserved => 0,
-        })
-        .sum()
+        }
+    }
 }
 
-pub fn question_wire_length(questions: &[Question<'_>]) -> usize {
-    questions
-        .iter()
-        .map(|q| name_wire_length(&q.q_name) + 4)
-        .sum()
+impl<'a> WireLength<usize> for Question<'a> {
+    fn wire_length(&self) -> usize {
+        self.q_name.wire_length() + 4
+    }
 }
 
-pub fn resource_record_wire_length(records: &[ResourceRecord<'_>]) -> usize {
-    records
-        .iter()
-        .map(|r| name_wire_length(&r.rr_name) + 10 + r.rr_data.len())
-        .sum()
+impl<'a> WireLength<usize> for ResourceRecord<'a> {
+    fn wire_length(&self) -> usize {
+        self.rr_name.wire_length() + 10 + self.rr_data.len()
+    }
 }
 
-pub fn message_wire_length<'a>(message: &Message<'a>) -> usize {
-    let length = header_wire_length(&message.header);
-    let length = length + question_wire_length(&message.question);
-    let length = length + resource_record_wire_length(&message.answer);
-    let length = length + resource_record_wire_length(&message.authority);
-    let length = length + resource_record_wire_length(&message.additional);
-    length
+impl<'a> WireLength<usize> for Message<'a> {
+    fn wire_length(&self) -> usize {
+        self.header.wire_length()
+            + self.question.wire_length()
+            + self.answer.wire_length()
+            + self.authority.wire_length()
+            + self.additional.wire_length()
+    }
 }
