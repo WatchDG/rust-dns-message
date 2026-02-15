@@ -1,8 +1,8 @@
 pub mod header;
 mod message;
 mod question;
+pub mod refs;
 pub mod resource_record;
-pub mod traits;
 
 pub use header::Header;
 pub use message::Message;
