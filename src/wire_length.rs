@@ -1,4 +1,8 @@
-use crate::{Header, Message, NameElement, Question, ResourceRecord};
+use crate::{Flags, Header, Message, NameElement, Question, ResourceRecord};
+
+pub fn flags_wire_length(_flags: &Flags) -> usize {
+    2
+}
 
 pub fn header_wire_length(_header: &Header) -> usize {
     12
