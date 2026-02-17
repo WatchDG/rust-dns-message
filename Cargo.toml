@@ -1,6 +1,6 @@
 [package]
 name = "dns-message"
-version = "0.1.2"
+version = "0.2.0"
 edition = "2024"
 authors = ["WatchDG <baranov@w3m.co>"]
 description = "DNS message library"
@@ -12,5 +12,6 @@ keywords = ["dns", "message", "protocol"]
 categories = ["network-programming", "parsing"]
 
 [dependencies]
+mt = "0.3"
 
 [dev-dependencies]

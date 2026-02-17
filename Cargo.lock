@@ -4,4 +4,13 @@ version = 4
 
 [[package]]
 name = "dns-message"
-version = "0.1.2"
+version = "0.2.0"
+dependencies = [
+ "mt",
+]
+
+[[package]]
+name = "mt"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b0cc9eb0fc978954c430ac2ed94f4c824db833b139f2c60c0ea1d7c37ab3d044"
