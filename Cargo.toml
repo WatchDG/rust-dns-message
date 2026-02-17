@@ -10,6 +10,7 @@ homepage = "https://github.com/WatchDG/rust-dns-message"
 documentation = "https://docs.rs/dns-message"
 keywords = ["dns", "message", "protocol"]
 categories = ["network-programming", "parsing"]
+exclude = [".gitignore", "RFC/*"]
 
 [dependencies]
 mt = "0.3"
