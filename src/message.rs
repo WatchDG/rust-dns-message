@@ -1,4 +1,10 @@
-use crate::{Additional, Answer, Authority, Header, Question};
+use crate::header::Header;
+use crate::question::Question;
+use crate::resource_record::ResourceRecord;
+
+pub type Answer<'a> = ResourceRecord<'a>;
+pub type Authority<'a> = ResourceRecord<'a>;
+pub type Additional<'a> = ResourceRecord<'a>;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Message<'a> {
