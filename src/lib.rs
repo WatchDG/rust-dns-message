@@ -1,9 +1,11 @@
+pub mod dnssec;
 pub mod header;
 pub mod message;
 pub mod question;
 pub mod resource_record;
 pub mod wire_length;
 
+pub use dnssec::*;
 pub use header::*;
 pub use message::*;
 pub use question::*;
